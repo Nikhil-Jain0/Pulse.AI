@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cardio — AI Cardiovascular Risk Assessment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- Ambient living background -->
+<canvas id="bg-canvas"></canvas>
+<div class="grain"></div>
+
+<!-- Custom cursor -->
+<canvas id="cursor-canvas"></canvas>
+
+<!-- ============ LANDING ============ -->
+<section id="view-landing" class="view view-active">
+  <nav class="topnav">
+    <div class="brand"><span class="brand-mark"></span>Cardio</div>
+  </nav>
+
+  <div class="landing-content">
+    <div class="eyebrow"><span class="eyebrow-dot"></span>AI Cardiovascular Assessment</div>
+    <h1 class="hero-title">
+      Know your heart.<br>
+      <span class="text-gradient">Before it knows you.</span>
+    </h1>
+    <p class="hero-sub">A clinical-grade risk model, reduced to five quiet questions.<br>Answer honestly — see your cardiovascular risk in real time.</p>
+    <button class="btn btn-primary btn-hero" id="btn-start">
+      <span>Start Assessment</span>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="hero-meta">
+      <div class="meta-item"><strong>918</strong><span>clinical cases</span></div>
+      <div class="meta-divider"></div>
+      <div class="meta-item"><strong>85.3%</strong><span>model accuracy</span></div>
+      <div class="meta-divider"></div>
+      <div class="meta-item"><strong>11</strong><span>indicators analyzed</span></div>
+    </div>
+  </div>
+
+  <div class="scroll-cue" aria-hidden="true">
+    <span>Scroll</span>
+    <div class="scroll-line"><div class="scroll-dot"></div></div>
+  </div>
+</section>
+
+<!-- ============ ASSESSMENT ============ -->
+<section id="view-assessment" class="view">
+  <div class="assess-shell">
+
+    <div class="assess-header">
+      <button class="btn-icon" id="btn-back-landing" aria-label="Back to start">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="progress-wrap">
+        <div class="progress-steps" id="progress-steps"></div>
+        <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      </div>
+      <div class="step-count"><span id="step-current">1</span>/<span id="step-total">5</span></div>
+    </div>
+
+    <form id="assessment-form" class="assess-body" autocomplete="off">
+
+      <!-- STEP 1: Personal -->
+      <fieldset class="step" data-step="1">
+        <div class="step-label">Personal</div>
+        <h2 class="step-title">Let's start with the basics.</h2>
+
+        <div class="field">
+          <label for="Age">Age</label>
+          <div class="slider-field">
+            <input type="range" id="Age" name="Age" min="18" max="100" value="45" required>
+            <div class="slider-value"><span id="Age-out">45</span><small>years</small></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Biological sex</label>
+          <div class="segmented" data-name="Sex">
+            <button type="button" class="seg-btn" data-value="M">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="10" cy="14" r="6" stroke="currentColor" stroke-width="2"/><path d="M14.5 9.5L20 4M20 4h-5M20 4v5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Male
+            </button>
+            <button type="button" class="seg-btn" data-value="F">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="6" stroke="currentColor" stroke-width="2"/><path d="M12 15v6M9 18h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              Female
+            </button>
+          </div>
+          <input type="hidden" name="Sex" required>
+        </div>
+      </fieldset>
+
+      <!-- STEP 2: Symptoms -->
+      <fieldset class="step" data-step="2">
+        <div class="step-label">Symptoms</div>
+        <h2 class="step-title">Tell us what you've felt.</h2>
+
+        <div class="field">
+          <label>Chest pain type</label>
+          <div class="card-select" data-name="ChestPainType">
+            <button type="button" class="opt-card" data-value="ATA">
+              <span class="opt-title">Atypical Angina</span>
+              <span class="opt-desc">Discomfort not classic for cardiac origin</span>
+            </button>
+            <button type="button" class="opt-card" data-value="NAP">
+              <span class="opt-title">Non-Anginal Pain</span>
+              <span class="opt-desc">Chest pain unrelated to the heart</span>
+            </button>
+            <button type="button" class="opt-card" data-value="ASY">
+              <span class="opt-title">Asymptomatic</span>
+              <span class="opt-desc">No chest pain reported</span>
+            </button>
+            <button type="button" class="opt-card" data-value="TA">
+              <span class="opt-title">Typical Angina</span>
+              <span class="opt-desc">Classic exertional chest pain</span>
+            </button>
+          </div>
+          <input type="hidden" name="ChestPainType" required>
+        </div>
+
+        <div class="field">
+          <label>Angina induced by exercise?</label>
+          <div class="segmented" data-name="ExerciseAngina">
+            <button type="button" class="seg-btn" data-value="Y">Yes</button>
+            <button type="button" class="seg-btn" data-value="N">No</button>
+          </div>
+          <input type="hidden" name="ExerciseAngina" required>
+        </div>
+      </fieldset>
+
+      <!-- STEP 3: Vitals -->
+      <fieldset class="step" data-step="3">
+        <div class="step-label">Vitals</div>
+        <h2 class="step-title">Your numbers, right now.</h2>
+
+        <div class="field">
+          <label for="RestingBP">Resting blood pressure</label>
+          <div class="slider-field">
+            <input type="range" id="RestingBP" name="RestingBP" min="80" max="220" value="130" required>
+            <div class="slider-value"><span id="RestingBP-out">130</span><small>mm Hg</small></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="MaxHR">Maximum heart rate achieved</label>
+          <div class="slider-field">
+            <input type="range" id="MaxHR" name="MaxHR" min="60" max="220" value="150" required>
+            <div class="slider-value"><span id="MaxHR-out">150</span><small>bpm</small></div>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- STEP 4: Clinical -->
+      <fieldset class="step" data-step="4">
+        <div class="step-label">Clinical</div>
+        <h2 class="step-title">Lab and diagnostic markers.</h2>
+
+        <div class="field">
+          <label for="Cholesterol">Serum cholesterol</label>
+          <div class="slider-field">
+            <input type="range" id="Cholesterol" name="Cholesterol" min="100" max="450" value="220" required>
+            <div class="slider-value"><span id="Cholesterol-out">220</span><small>mg/dl</small></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Fasting blood sugar &gt; 120 mg/dl?</label>
+          <div class="segmented" data-name="FastingBS">
+            <button type="button" class="seg-btn" data-value="1">Yes</button>
+            <button type="button" class="seg-btn" data-value="0">No</button>
+          </div>
+          <input type="hidden" name="FastingBS" required>
+        </div>
+
+        <div class="field">
+          <label>Resting ECG result</label>
+          <div class="card-select" data-name="RestingECG">
+            <button type="button" class="opt-card" data-value="Normal">
+              <span class="opt-title">Normal</span>
+              <span class="opt-desc">No abnormalities detected</span>
+            </button>
+            <button type="button" class="opt-card" data-value="ST">
+              <span class="opt-title">ST-T Abnormality</span>
+              <span class="opt-desc">ST-T wave changes present</span>
+            </button>
+            <button type="button" class="opt-card" data-value="LVH">
+              <span class="opt-title">LV Hypertrophy</span>
+              <span class="opt-desc">Left ventricular hypertrophy</span>
+            </button>
+          </div>
+          <input type="hidden" name="RestingECG" required>
+        </div>
+      </fieldset>
+
+      <!-- STEP 5: ECG Analysis -->
+      <fieldset class="step" data-step="5">
+        <div class="step-label">ECG Analysis</div>
+        <h2 class="step-title">The final signal.</h2>
+
+        <div class="field">
+          <label for="Oldpeak">ST depression (Oldpeak)</label>
+          <div class="slider-field">
+            <input type="range" id="Oldpeak" name="Oldpeak" min="-2" max="7" step="0.1" value="1.0" required>
+            <div class="slider-value"><span id="Oldpeak-out">1.0</span><small>mm</small></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>ST segment slope</label>
+          <div class="card-select" data-name="ST_Slope">
+            <button type="button" class="opt-card" data-value="Up">
+              <span class="opt-title">Upsloping</span>
+              <span class="opt-desc">Typically the healthiest pattern</span>
+            </button>
+            <button type="button" class="opt-card" data-value="Flat">
+              <span class="opt-title">Flat</span>
+              <span class="opt-desc">Associated with elevated risk</span>
+            </button>
+            <button type="button" class="opt-card" data-value="Down">
+              <span class="opt-title">Downsloping</span>
+              <span class="opt-desc">Associated with highest risk</span>
+            </button>
+          </div>
+          <input type="hidden" name="ST_Slope" required>
+        </div>
+      </fieldset>
+
+    </form>
+
+    <div class="assess-footer">
+      <button class="btn btn-ghost" id="btn-prev" disabled>Back</button>
+      <button class="btn btn-primary" id="btn-next">Continue</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LOADING ============ -->
+<section id="view-loading" class="view">
+  <div class="loading-shell">
+    <div class="loading-heart">
+      <svg viewBox="0 0 100 100" width="120" height="120">
+        <path id="loading-heart-path" d="M50 88 C20 65 5 45 5 28 C5 13 17 3 30 3 C40 3 47 9 50 17 C53 9 60 3 70 3 C83 3 95 13 95 28 C95 45 80 65 50 88 Z" fill="none" stroke="url(#heartGrad)" stroke-width="2.5"/>
+        <defs>
+          <linearGradient id="heartGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ff3b5c"/>
+            <stop offset="100%" stop-color="#ff7a8a"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <svg class="ecg-line" viewBox="0 0 300 60" preserveAspectRatio="none">
+        <polyline id="ecg-poly" points="0,30 40,30 55,10 65,50 75,30 300,30" fill="none" stroke="#ff3b5c" stroke-width="2"/>
+      </svg>
+    </div>
+    <div class="loading-text" id="loading-text">Analyzing cardiovascular profile...</div>
+  </div>
+</section>
+
+<!-- ============ RESULT ============ -->
+<section id="view-result" class="view">
+  <div class="result-shell">
+
+    <div class="result-hero">
+      <div class="risk-meter">
+        <svg viewBox="0 0 220 220" width="220" height="220">
+          <circle cx="110" cy="110" r="96" class="meter-track"/>
+          <circle cx="110" cy="110" r="96" class="meter-fill" id="meter-fill"/>
+        </svg>
+        <div class="risk-meter-center">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" class="risk-heart-icon"><path d="M12 21s-7-4.6-9.5-9.1C.8 8.6 2 5 5.6 4.2 8 3.7 10 5 12 7.3 14 5 16 3.7 18.4 4.2 22 5 23.2 8.6 21.5 11.9 19 16.4 12 21 12 21z" fill="#ff3b5c"/></svg>
+          <div class="risk-percent" id="risk-percent">0%</div>
+          <div class="risk-label" id="risk-label">Calculating</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-sections">
+
+      <div class="result-block" id="block-factors">
+        <h3 class="block-title">Risk Factors Reviewed</h3>
+        <div class="factor-grid" id="factor-grid"></div>
+      </div>
+
+      <div class="result-columns">
+        <div class="result-block">
+          <h3 class="block-title good">Positive Indicators</h3>
+          <div class="indicator-list" id="positive-list"></div>
+        </div>
+        <div class="result-block">
+          <h3 class="block-title bad">Potential Concerns</h3>
+          <div class="indicator-list" id="concern-list"></div>
+        </div>
+      </div>
+
+      <div class="result-block">
+        <h3 class="block-title">Personalized Recommendations</h3>
+        <div class="timeline" id="recommendation-timeline"></div>
+      </div>
+
+      <div class="result-block">
+        <h3 class="block-title">What Happens If...</h3>
+        <p class="block-sub">Interactively simulate lifestyle changes and see the effect on your predicted risk.</p>
+        <div class="simulator" id="simulator"></div>
+      </div>
+
+    </div>
+
+    <div class="result-footer">
+      <button class="btn btn-ghost" id="btn-restart">New Assessment</button>
+    </div>
+
+    <p class="disclaimer">This tool provides a statistical estimate for educational purposes only and is not a medical diagnosis. Consult a physician for clinical advice.</p>
+  </div>
+</section>
+
+<script src="{{ url_for('static', filename='js/background.js') }}"></script>
+<script src="{{ url_for('static', filename='js/cursor.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/report.js') }}"></script>
+</body>
+</html>
